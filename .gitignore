@@ -1,0 +1,11 @@
+#Text Editor Temporaries
+
+*~
+*.swp
+
+#Compiled Sources
+*.o
+*.so
+*.a
+*.dylib
+*.pyo
