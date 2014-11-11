@@ -31,10 +31,8 @@ void swap(double& a, double& b){
   b = c;
 }
 
-
-
 double line(double m, double c){
-  return  - c / m;
+  return  - div(c , m);
 }
 
 bool quad(double& a, double& b, double& c){
@@ -48,9 +46,6 @@ bool quad(double& a, double& b, double& c){
   }
   else return 0;
 }
-  //double quadm(double a, double b, double c){
-  //return ( -b - sqrt( b*b -4*a*c) )/ (2*a);
-  //}
 
 double vec3(double a, double b, double c){
   return sqrt(a*a + b*b + c*c);
@@ -69,7 +64,28 @@ double mass(double e1, double px1, double py1, double pz1, double e2, double px2
   return sqrt( vec4(E,px,py,pz) );
 }
 
-  
+double input(){
+  double a(0);
+
+  std::cin >> a;
+
+  while (!std::cin){
+
+    std::cout<< "User inpur error: Invalid number. Please retry:\n";
+
+    std::cin.clear(); // clear fail flag
+    std::cin.ignore(INT_MAX, '\n'); // clear cin buffer
+
+    std::cin >> a;
+  }
+}
+
+void input4(double& a, double& b, double& c, double& d){
+  a = input();
+  b = input();
+  c = input();
+  d = input();
+}  
 
 int main()
 {
@@ -79,7 +95,7 @@ int main()
   int i = 0, N = 0;
 
 
-  while (i == 0){
+  while (i==0){
 
     std::cout << "\nChoose operation (Enter o for options)\n";
     std::cin >> o;
@@ -99,28 +115,12 @@ int main()
     if(o == "+" || o == "-" || o == "*" || o == "/" || o == "s"){ // enter a and b if user chooses a binary operation
       
       std::cout <<"\nEnter the value of a:\n";
-      std::cin >> a;
-    
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables  
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-	
-	continue;
-      }
+     
+      a = input();
       
       std::cout << "\nEnter the value of b:\n";
-      std::cin >> b;
-      
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables    
-	
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-	continue;      
-      }
+      b = input();
+        
     }
   
 
@@ -142,7 +142,14 @@ int main()
     }
     
     if(o == "/"){ //Division                                          
+
+      if(b == 0){
+	std::cout << "Error: division by zero";
+	continue;
+      }
+
       c = div( a , b );
+
       std::cout << "\nThe value of a / b is " << c << std::endl;
     }
 
@@ -152,73 +159,35 @@ int main()
       std::cout << "\nThe value of a is now " << a << "\nThe value of b is now " << b << std::endl;
     }
 
+
     if (o == "xi"){ // line intercept
 	std::cout << "For a line of the form y = mx + c,\nEnter the value of m:\n";
-	std::cin >> a;
-
-	if(!std::cin){
-	  std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	  std::cin.clear();  // clear the fail flag
-	  std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-	  continue;
-	}
+	
+	a = input ();
 
 	std::cout << "\nEnter the value of c:\n";
-	std::cin >> b;
+	
+	b = input ();
 
-	if(!std::cin){
-	  std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	  std::cin.clear();  // clear the fail flag
-	  std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-	  continue;
-	}
-
+	if(a != 0){
 	c = line( a , b );
 	std:: cout << "\nThe value of the x intercept is " << c << std::endl;
-      }
+	}
+	else std::cout << "Error: This line does not intercept the x axis";
+
+    }
+
 
     if(o == "qe"){ // quadratic equation
-      std::cout <<"For a quadratic equation of the form ax^2 + bx + c = 0,\nEnter the value of a:\n";
-      std::cin >> a;
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
+      std::cout << "For a quadratic equation of the form ax^2 + bx + c = 0,\nEnter the value of a:\n";
+      a = input();
 
       std::cout << "\nEnter the value of b:\n";
-      std::cin >> b;
+      b = input();
 
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
 
       std::cout << "\nEnter the value of c:\n";
-      std::cin >> c;
-
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
+      c = input();
 
 
       if(quad(a , b , c) == 1){
@@ -227,76 +196,31 @@ int main()
 	}
       else std::cout << "Error: solutions are not real";
     }
-    if(!std::cin){
-      std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables                                     \
-                                                                                                                                            
 
-      std::cin.clear();  // clear the fail flag                                                                                          \
-                                                                                                                                            
-      std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer                                                                            \
-                                                                                                                                            
 
-      continue;
-    }
 
     if(o == "3v"){ // length of 3 vector
       std::cout <<"For a 3 vector of the form ( a , b , c ),\nEnter the value of a:\n";
-      std::cin >> a;
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
+      a = input();
 
       std::cout << "\nEnter the value of b:\n";
-      std::cin >> b;
+      b = input();
 
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
 
       std::cout << "\nEnter the value of c:\n";
-      std::cin >> c;
+      c = input();
 
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
-
-        d = vec3( a, b, c);
-
-	std::cout << "The length of the 3 vector is " << d <<std::endl;
+      d = vec3( a, b, c);
+      
+      std::cout << "The length of the 3 vector is " << d <<std::endl;
     }
 
 
     if (o == "4v"){ //4 vector
 
       std::cout << "For a 4-vector of the form ( t , x , y , z ), \nEnter the values of t, x, y, z:\n";
-      std::cin >> a >> b >> c >> d;
+      input4(a , b , c , d);
 
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
 
       double e2 = vec4(a,b,c,d);
 
@@ -312,27 +236,16 @@ int main()
 
     if(o == "im"){ // invariant mass
       std::cout << "For 2 4-vectors of the form ( E , px , py , pz ), \nEnter the values of E1, px1, px1, pz1:\n";
-      std::cin >> a >> b >> c >> d;
+      input4(a , b , c , d);
 
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
-
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
-      }
 
       std::cout << "\nEnter the values of E2, px2, py2, pz2:\n";
-      std::cin >> a2 >> b2 >> c2 >> d2;
+      input4(a2, b2, c2, d2);
 
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables
 
-	std::cin.clear();  // clear the fail flag
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer
-
-        continue;
+      if( a < 0 || a2 < 0){
+	std::cout << "Error: Energies must be positive";
+	continue;
       }
 
       double m1 = vec4(a,b,c,d);
@@ -349,34 +262,14 @@ int main()
     if(o == "so"){ // Sorting Algorithm
 
       std::cout <<"\nEnter the number of elements:\n";
-      std::cin >> N;
-
-      if(!std::cin){
-	std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables                                      
-
-	std::cin.clear();  // clear the fail flag                                                                                           
-	std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer                                                                             
-
-        continue;
-      }
+      N = input();
 
       double array[N]; 
 
       for(int j = 0; j < N; j++){// loop over j to input elements
-	std::cout << "Enter element " << j <<":"<<std::endl;
-	std::cin >> array[j];
-
-	if(!std::cin){
-	  std::cout <<"User input error: Invalid number\n"; // error message for invalid input variables          
-	  break;
-	}
 	
-	if(!std::cin){
-	                                        
-	  std::cin.clear();  // clear the fail flag                                                                                       
-	  std::cin.ignore(INT_MAX, '\n'); // clear the cin buffer                                                                          
-	  continue;	
-	}
+	std::cout << "Enter element " << j <<":"<<std::endl;
+	array[j] = input();
       }
 
       int k = 0;
