@@ -132,7 +132,7 @@ void day2()
 
 
         int Event[1000];
-        string Name[1000];
+        string Name[1000], run[1000];
         double px[1000], py[1000], pz[1000], E[1000];
 
 	// Loop until out of lines
@@ -148,6 +148,8 @@ void day2()
 
 	  E[j] = Energy( Mmu, px[j] , py[j] , pz[j]); //assume all particles have muon mass
 
+	  run[j] = f.getFieldAsString (6);
+
 	  // Check that input is o.k.
 	  if (f.inputFailed()){
 	    std::cout <<"Error: Invalid input";
@@ -155,6 +157,15 @@ void day2()
 	  }
 	}
       
+	std::cout<<"\nEvents containing muons/anti-muons in run4.dat:\n";
+	for(int j = 0; j < 1000; j++){
+	  if(run[j] != "run4.dat") continue;
+	  if (Name[j] == "mu+" || Name[j] == "mu-"){
+	    std::cout<<Event[j]<<", ";
+	  }
+
+	}
+
 
 	int Np = 0, Nmup = 0, Nmum = 0; 
 	
@@ -172,7 +183,7 @@ void day2()
 	
 	Nmum = Np / Nmup; // Nmuons * Nantimuons = Npairs
 	
-	std::cout<<"\nNumber of muons = " << Nmum <<"\nNumber of antimuons = " << Nmup <<"\nNumber of pairs = " << Np << std::endl;
+	std::cout<<"\n\nNumber of muons = " << Nmum <<"\nNumber of antimuons = " << Nmup <<"\nNumber of pairs = " << Np << std::endl;
 	//output numbers of particles and pairs
 	
 	double invmass[Np];
