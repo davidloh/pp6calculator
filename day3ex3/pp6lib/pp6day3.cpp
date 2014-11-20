@@ -62,7 +62,7 @@ void day3()
       set4vy(s, y);
       set4vz(s, z);
 
-      zboost(s, v);      
+      s->zboost(v);      
 
       t = return4vt(s);
       z = return4vz(s);
@@ -89,12 +89,12 @@ void day3()
       set4vz(s, z);
 
       if( get4vtype(s) == timelike){
-	l = tlength(s);
+	l = sqrt( s->length() );
 	std::cout << "The length of the (time-like) 4-vector is " << l << std::endl;
       }
 
       if( get4vtype(s) == spacelike){
-	l = slength(s);
+	l = sqrt( - s->length() );
 	std::cout << "The length of the (space-like) 4-vector is " << l << std::endl;
       }
 
