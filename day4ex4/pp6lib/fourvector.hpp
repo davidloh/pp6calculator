@@ -2,25 +2,27 @@
 #include "threevector.hpp"
 
 
+
 #ifndef FOURVECTOR_HPP
 #define FOURVECTOR_HPP
 
 
-
- enum type4v{
-   spacelike,
-   timelike,
-   null,
- };
+enum type4v{
+  spacelike,
+  timelike,
+  null,
+};
 
 
 
 class fourvector {
 public:
 
+  fourvector();
 
+  fourvector(const double t_, const double x_, const double y_, const double z_);
 
-  fourvector(double t_, threevector v_);
+  fourvector(const double t_,const threevector v_);
 
 
   void zboost(double v_);
@@ -30,9 +32,10 @@ public:
   double gety() const;
   double getz() const;
 
-  double interval();
-  type4v get4vtype();
-  double get3vlength();
+  double getinterval() const;
+  type4v get4vtype() const;
+  double get3vlength() const;
+  threevector get3v() const;
 
   void sett(double t_);
   void setx(double x_);
@@ -51,10 +54,6 @@ public:
       return *this;
   }
 
-  double operator*=(fourvector& rhs){
-    double r2 = v *= rhs.v;
-    return t*rhs.t - r2;
-  }
 
 private:
 
@@ -62,18 +61,17 @@ private:
   threevector v;
 
   double interv;
+  type4v type;
+
   void compute_interval();
-  type4v type();
+  void compute_type();
 
 };
 
 
-fourvector* create4v(double t, double x, double y, double z);
-
-void destroy4v( fourvector *&s);
-
 std::ostream& operator<<(std::ostream& stream, fourvector& v);
 
+double dot4v(const fourvector s1,const fourvector s2);
 
 #endif
 	       

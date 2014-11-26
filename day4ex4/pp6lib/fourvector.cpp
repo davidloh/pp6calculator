@@ -1,49 +1,55 @@
+#include <string>
 #include <cmath>
 #include "fourvector.hpp"
 #include "threevector.hpp"
 
-fourvector* create4v(double t, double x, double y, double z) {
-  
-  threevector *v;
-  v = create3v(x, y, z);  
+using std::string;
 
-  return new fourvector(t, *v);
+// constructors
+
+fourvector::fourvector()
+  : t(0.0), v()
+
+{
+  compute_interval();
+  compute_type();
+}
+
+fourvector::fourvector(const double t_, const double x_, const double y_, const double z_)
+  : t(t_), v(x_, y_, z_)
+
+{
+  compute_interval(); //calculate properties of 4 vector when it is constructed
+  compute_type();
 }
 
 
-fourvector::fourvector(double t_, threevector v_)
+fourvector::fourvector(const double t_,const threevector v_)
   : t(t_), v(v_) 
 
 { 
-  compute_interval(); //calculate properties of 4 vector when it is constructed
-  fourvector::type();
+  compute_interval(); 
+  compute_type();
 }
 
 void fourvector::compute_interval(){
 
-  double l = v.length();
-
+  double l = v.getlength();
   interv = t*t - l*l;
 }
 
-// double fourvector::interval(){
 
-//   double l = v.length();
+void fourvector::compute_type(){
 
-//   return t*t - l*l; 
-// }
-
-double fourvector::interval(){
-  return interv;
-}
-
-type4v fourvector::type(){
-
-  if ( interv > 0.0)   return timelike;
-  if ( interv < 0.0)   return spacelike;
-
-  else  return null;
-
+  if ( interv > 0.0){
+    type = timelike;
+  }
+  if ( interv < 0.0){  
+    type = spacelike;
+  }
+  else{
+    type = null;
+  }
 }
 
 
@@ -61,10 +67,7 @@ void fourvector::zboost(double v_){
 
 }                             
 
-
-// double fourvector::getinterval() const{
-//   return interval;
-// }
+// get functions
 
 double fourvector::gett() const{ 
   return t;
@@ -82,28 +85,43 @@ double fourvector::getz() const{
   return v.getz();
 }
 
-type4v fourvector::get4vtype() {
-  return type();
+type4v fourvector::get4vtype() const{
+  return type;
 }
 
-double fourvector::get3vlength() {
-  return v.length();
+double fourvector::get3vlength() const{
+  return v.getlength();
 }
+
+threevector fourvector::get3v() const{
+  return v;
+}
+
+double fourvector::getinterval() const{
+  return interv;
+}
+
+
+//set functions
 
 void fourvector::sett(double t_){
   t =t_;
+  compute_interval();
 }
 
 void fourvector::setx(double x_){
   v.setx(x_);
+  compute_interval();
 }
 
 void fourvector::sety(double y_){
   v.sety(y_);
+  compute_interval();
 }
 
 void fourvector::setz(double z_){
   v.setz(z_);
+  compute_interval();
 }
 
 
@@ -113,11 +131,11 @@ std::ostream& operator<<(std::ostream& stream, fourvector& v){
   return stream;  
 }
 
-void destroy4v(fourvector *&s) {
-  if(s) {
 
-        
-    delete s;
-    s = 0;
-  }
+double dot4v(const fourvector s1,const fourvector s2){
+
+  threevector v1 = s1.get3v();
+
+  return s1.gett() * s2.gett() - dot3v( s1.get3v() , s2.get3v() );
+  
 }

@@ -13,6 +13,7 @@ using std::string;
 #include "pp6math.hpp"
 #include "FileReader.hpp"
 #include "particle.hpp"
+#include "ParticleInfo.hpp"
 
 void day2()
 {
@@ -121,10 +122,10 @@ void day2()
       std::cout <<"\nEnter the input file to be analysed:\n";
       std::cin >> filename;
 
+      // for faster testing, use
+      // filename = "observedparticles.dat";
+
       FileReader f( filename );
-
-
-      //double Mmu = 0.105658;
 
       int Nentries;
 
@@ -133,7 +134,7 @@ void day2()
 
 	f.nextLine(); // skip the line of titles
 
-	Nentries = countlines( filename );
+	Nentries = countlines( filename ) -1; // subtract line of titles
 
 	std::cout <<"\nNumber of entries: "<< Nentries << std::endl;
 
@@ -141,26 +142,23 @@ void day2()
         string run[Nentries];
        
 
-	particle *P_[Nentries];
+	particle P_[Nentries];
 
+	ParticleInfo PDG("pdg.dat"); //database of particles
 
 	// Loop until out of lines
 	for (int j = 0; f.nextLine() ; j++) {
 
-	  Event[j] = f.getFieldAsInt(1);
+	  Event[j] = f.getFieldAsInt(1);	  
 
-	  P_[j] = createparticle( f.getFieldAsString(2) , f.getFieldAsDouble(3) , f.getFieldAsDouble(4) , f.getFieldAsDouble(5) );
+	  //get particle name, lookup PDG code, set PDGcode
+	  P_[j].setpdgcode( PDG.getPDGcode( f.getField<string>(2) ) );
 
-	  //P[j]->setType( f.getFieldAsString(2) );
-	  
+	  P_[j].setpx( f.getField<double>(3) );
+          P_[j].setpy( f.getField<double>(4) );
+          P_[j].setpz( f.getField<double>(5) );
 
-	  //P[j]->setpx( f.getFieldAsDouble(3) );
-          //P[j]->setpy( f.getFieldAsDouble(4) );
-          //P[j]->setpz( f.getFieldAsDouble(5) );
-
-	  //E[j] = Energy( Mmu, px[j] , py[j] , pz[j]); //assume all particles have muon mass
-
-	  run[j] = f.getFieldAsString (6);
+	  run[j] = f.getField<string>(6);
 
 	  // Check that input is o.k.
 	  if (f.inputFailed()){
@@ -168,26 +166,32 @@ void day2()
 	    break;
 	  }
 	}
+
+	// find code for muons
+	int mucode = PDG.getPDGcode("mu-");
       
 	std::cout<<"\nEvents containing muons/anti-muons in run4.dat:\n";
 	for(int j = 0; j < Nentries; j++){
-	  if(run[j] != "run4.dat") continue;
-	  if (P_[j]->getType() == "mu+" || P_[j]->getType() == "mu-"){
+	  if( run[j] != "run4.dat") continue;
+	  if (P_[j].getpdgcode() == -mucode || P_[j].getpdgcode() == mucode){
 	    std::cout<<Event[j]<<", ";
 	  }
 
 	}
 
-
 	int Nmum = 0, Nmup = 0; 
-	
+       
 	//count pairs in run4.dat
 	
 	for (int j = 0; j < Nentries; j++){ // loop over all entries
 	  if(run[j] != "run4.dat") continue;
 	  else{
-	    if(P_[j]->getType() == "mu+") Nmup++;
-	    if(P_[j]->getType() == "mu-") Nmum++;
+	    if(P_[j].getpdgcode() == -mucode){
+	      Nmup++;
+	    }
+	    if(P_[j].getpdgcode() == mucode){
+	      Nmum++;
+	    }
 	  }
 	}
 	
@@ -197,37 +201,34 @@ void day2()
 	std::cout<<"\n\nIn run4.dat:\nNumber of muons = " << Nmum <<"\nNumber of antimuons = " << Nmup <<"\nNumber of pairs = " << Np << std::endl;
 	//output numbers of particles and pairs
 	
-	double invmass[Np];
-
+	double imass[Np];
 	int mupindex[Np], mumindex[Np], massindex[Np];
-	
 	int l = 0;
 	
 	// calculate invariant masses
 	for (int j = 0; j < Nentries; j++){ // loop over all mu+
-	  if(P_[j]->getType() != "mu+" || run[j] != "run4.dat") continue;
-	  
+	  if(run[j] != "run4.dat" ||P_[j].getpdgcode() != -mucode) continue;
+
 	  for (int i = 0; i < Nentries; i++){ // loop over all mu-
-	    if(P_[i]->getType() != "mu-" || run[i] != "run4.dat") continue;
+	    if(P_[i].getpdgcode() != mucode || run[i] != "run4.dat") continue;
 	    
-	    invmass[l] = *P_[i] *= *P_[j];
-	    //invmass[l] = mass( E[i], px[i], py[i], pz[i], E[j], px[j], py[j], pz[j] );
+	    imass[l] = invmass(P_[i] , P_[j]);
 	    
 	    mupindex[l] = j;
 	    mumindex[l] = i; // index of original muon/antimuon event
-
+	
 	    l++;
 	  }
 	}
-
+	
 	// Sort Masses
-	indexsort( invmass, massindex, Np );
+	indexsort( imass, massindex, Np );
 	
 	
 	std::cout << "\nThe 10 highest masses are:\n";
 
 	for(int j = 0; j < 10; j++){
-	  std::cout << invmass[ massindex[j] ] << " (Events "<< Event[ mupindex[ massindex[j] ] ] << " and "<< Event[ mumindex[ massindex[j] ] ] <<")"<<std::endl;
+	  std::cout << imass[ massindex[j] ] << " (Events "<< Event[ mupindex[ massindex[j] ] ] << " and "<< Event[ mumindex[ massindex[j] ] ] <<")"<<std::endl;
 	}
 
 

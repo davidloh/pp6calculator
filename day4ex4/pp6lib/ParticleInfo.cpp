@@ -2,37 +2,39 @@
 #include <map>
 #include "FileReader.hpp"
 #include <string>
+#include "pp6math.hpp"
 
-ParticleInfo::ParticleInfo(string name_)
-  :name(name_)
+using std::string;
+
+ParticleInfo::ParticleInfo(string file_)
+  :file(file_)
 {
-
-  FileReader f( pdg.dat );
-
-  int Nentries;
-
-  // Only process if the file is open/valid                                                                     
-  if (f.isValid()) {
-   
-    for(int j = 0; f.nextLine(); j++){
-      
-      NameIDs[ f.getField<string>(1) ] = f.getField<int>(2);
-      
-      ChargeIDs[ f.getField<int>(3) ] = f.getField<int>(2);
-      
-      MassIDs[ f.getField<double>(4) ] = f.getField<int>(2);
-      
-      IDNames[ f.getField<int>(2) ] = f.getField<string>(1);      
-                                         
-    }
-    else std::cout <<"Error: Invaid file";
-    
-  }
-  
-
+  compute_pdg();
 }
 
-int ParticleInfo::getPDGcode(string& name){
+void ParticleInfo::compute_pdg(){
+
+  FileReader f( file );
+
+  //int Nentries = countlines( file );
+
+  // Only process if the file is open/valid   
+
+  if (f.isValid()) {
+
+    for(int j = 0; f.nextLine(); j++){
+
+      NameIDs[ f.getField<string>(1) ] = f.getField<int>(2);
+      ChargeIDs[ f.getField<int>(3) ] = f.getField<int>(2);
+      MassIDs[ f.getField<double>(4) ] = f.getField<int>(2);
+      IDNames[ f.getField<int>(2) ] = f.getField<string>(1);
+
+    }
+  }
+    else std::cout <<"Error: Invaid file";
+}
+
+int ParticleInfo::getPDGcode(string name){
   
   Name_IDcont::iterator p = NameIDs.find( name );
   
@@ -45,7 +47,7 @@ int ParticleInfo::getPDGcode(string& name){
 }
   
 
-int ParticleInfo::getCharge(int pid){
+int ParticleInfo::getCharge(int& pid){
 
   Charge_IDcont::iterator p = ChargeIDs.find( pid );
 
@@ -57,11 +59,11 @@ int ParticleInfo::getCharge(int pid){
   }
 }
 
-string ParticleInfo::getName(int pid){
+string ParticleInfo::getName(int& pid){
 
-  Name_IDcont::iterator p = NameIDs.find( pid );
+  ID_Namecont::iterator p = IDNames.find( pid );
 
-  if(p != NameIDs.end() ){
+  if(p != IDNames.end() ){
     return (*p).second;
   }
   else {
@@ -70,7 +72,7 @@ string ParticleInfo::getName(int pid){
 }
 
 
-string ParticleInfo::getMass(int pid){
+double ParticleInfo::getMass(int& pid){
 
   Mass_IDcont::iterator p = MassIDs.find( pid );
 

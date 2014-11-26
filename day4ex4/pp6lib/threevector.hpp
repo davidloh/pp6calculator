@@ -8,7 +8,14 @@
 class threevector {
 public:
 
-  threevector(double x_, double y_, double z_);
+  //default constructor
+  threevector();
+
+  //copy constructor
+  threevector(const threevector& v3);
+
+  //component constructor
+  threevector(const double x_, const double y_, const double z_);
 
   void setx(double x_);
   void sety(double y_);
@@ -17,27 +24,15 @@ public:
   double getx() const;
   double gety() const;
   double getz() const;
-
-  double length();
+  double getlength() const;
  
+  threevector& operator=(const threevector& v3);
 
-   threevector operator+=(threevector& rhs){
-     x += rhs.x;
-     y += rhs.y;
-     z += rhs.z;
-     return *this;
-   }
+  threevector& operator+=(const threevector& rhs);
 
-   threevector operator-=(threevector& rhs){
-     x -= rhs.x;
-     y -= rhs.y;
-     z -= rhs.z;
-     return *this;
-   }
+  threevector& operator-=(const threevector& rhs);
 
-  double operator*=(threevector& rhs){
-    return x*rhs.x + y*rhs.y + z*rhs.z;
-  }
+  threevector& operator*=(const double scalar);
 
 
 
@@ -53,10 +48,11 @@ private:
 };
 
 
-threevector* create3v(double x, double y, double z);
+// threevector* create3v(double x, double y, double z);
 
 
-std::ostream& operator<<(std::ostream& stream, threevector& v);
+std::ostream& operator<<(std::ostream& stream, const threevector& v);
 
+double dot3v(const threevector v1, const threevector v2);
 
 #endif

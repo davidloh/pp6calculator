@@ -11,42 +11,37 @@ using std::string;
 class particle {
 public:
 
-  particle(double mass_, fourvector P_, string type_);
 
-//   void setType(string type_);
+  particle();
+  particle(const int pdgcode_);
+  particle(const int pdgcode_, const double px_, const double py_, const double pz_);
 
-//   void setpx(double px_);
-//   void setpy(double py_);
-//   void setpz(double pz_);
 
-  double getE();
-  double getmass();
-  string getType();
 
-  void setType(string type_);
+  double getE() const;
+  double getmass() const;
+  int getpdgcode() const;
+  fourvector get4v() const;
+
+
+  void setpdgcode(int pdgcode_);
   void setpx(double px_);
   void setpy(double py_);
   void setpz(double pz_);
 
-  double operator*=(particle& rhs){
-
-    return sqrt( mass*mass + rhs.getmass() * rhs.getmass() + 2 * (P *= rhs.P) ); 
-
-  }
-
 
 private:
 
+  int pdgcode;
   double mass;
   fourvector P;
-  string type;
+
+  void compute_E();
+  void compute_mass();
 
 }; 
   
-
-particle* createparticle(string type, double px, double py, double pz);
-
-void destroyparticle( particle *&p);
+double invmass(const particle p1, const particle p2);
 
 
 #endif
