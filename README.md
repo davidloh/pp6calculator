@@ -8,8 +8,14 @@ Authors
 
 Installation
 ------------
+1. Create a parallel build directory to the directory containing this README.
 
-Broken code
+2. Run "cmake" in the build directory, pointing it to the original directory.
+
+3. Run "make" in the build directory.
+
+4. Copy any additional files to the build directory. (eg. pdg.dat, observedparticles.dat)
+
 
 License
 -------
